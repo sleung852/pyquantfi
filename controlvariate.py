@@ -1,4 +1,4 @@
-from utils import _N, cross_sum_product, product
+from utils import _N, sum_sum_product, product
 import math
 
 class GeometricAsianOptionPricer:
@@ -67,7 +67,7 @@ class GeometricAsianOptionBasketPricer:
         return product(Bg) ** (1/self.n)
 
     def _sigma_Bg(self):
-        return math.sqrt(cross_sum_product(self.sigmas, self.rhos)) / self.n
+        return math.sqrt(sum_sum_product(self.sigmas, self.rhos)) / self.n
 
     def _mu_Bg(self):
         return self.r - 0.5 * sum([sigma**2 for sigma in sigmas]) / n + 0.5 * self._sigma_Bg ** 2

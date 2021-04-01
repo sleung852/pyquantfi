@@ -10,7 +10,7 @@ class MonteCarloSimulator:
         m is the no of paths
         """
         self.S = S
-        self.simga = simga
+        self.sigma = sigma
         self.r = r
         self.deltaT = deltaT
         self.K = K
