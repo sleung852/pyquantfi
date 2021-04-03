@@ -1,7 +1,6 @@
 from scipy import stats
 from itertools import permutations
 import math
-import random
 
 
 def _N(dx, sign=1):
@@ -35,8 +34,7 @@ def confidence_interval(mu, sigma, M, level=0.95):
     return [mu - 1.96*sigma/math.sqrt(M), mu + 1.96*sigma/math.sqrt(M)]
 
 def psuedo_rand_no():
-    return random.random()
+    return random.normal()
 
 def quasi_rand_no():
     pass
-

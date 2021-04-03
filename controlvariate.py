@@ -26,7 +26,7 @@ class GeometricAsianOptionPricer:
         return self._d1_hat() - self.sigma_hat*math.sqrt(self.deltaT)
 
     def get_call_premium(self):
-        c = math.exp(-self.r * self.deltaT) * (self.S*math.exp(self.mu_hat*self.deltaT)*_N(self._d1_hat()) - self. K * _N(self._d2_hat())) 
+        c = math.exp(-self.r * self.deltaT) * (self.S*math.exp(self.mu_hat*self.deltaT)*_N(self._d1_hat()) - self. K*_N(self._d2_hat())) 
         return c
 
     def get_put_premium(self):
@@ -67,7 +67,8 @@ class GeometricAsianOptionBasketPricer:
         return product(Bg) ** (1/self.n)
 
     def _sigma_Bg(self):
-        return math.sqrt(sum_sum_product(self.sigmas, self.rhos)) / self.n
+        # return math.sqrt(sum_sum_product(self.sigmas, self.rhos)) / self.n
+        return self.sigma[0] * self.sigmas[1] * self.rhos
 
     def _mu_Bg(self):
         return self.r - 0.5 * sum([sigma**2 for sigma in sigmas]) / n + 0.5 * self._sigma_Bg ** 2
