@@ -1,29 +1,13 @@
-import math
-import numpy as np
+from binominaltree import BinominalTree
 
-S = 4
-sigma = 0.25
-r = 0.03
-deltaT = 1
-N = int(deltaT/1e-2)
-M = int(1e4)
+bt = BinominalTree(50, 50, 0.25, 0.3, 0.05, 3)
 
-#S_path = []
+print(bt.get_option_premium())
 
-print("N:",N)
-drift = math.exp((r - 0.5 * sigma**2) * deltaT)
-print('drift:', drift)
+bt2 = BinominalTree(50,52,2,0.223144,0.05,2)
 
-growth_factor = drift * math.exp(sigma * math.sqrt(deltaT)*np.random.normal())
-print('growth_factor:', growth_factor)
-S_hat = S * growth_factor
-print('S_hat', S_hat)
-S_path = [S_hat]
-for _ in range(int(N-1)):
-    growth_factor = drift * math.exp(sigma * math.sqrt(deltaT)*np.random.normal())
-    print('growth_factor:', growth_factor)
-    print('S_hat', growth_factor * S_path[-1])
-    S_path.append(growth_factor * S_path[-1])
-print('S_path:', S_path)
-print('len:', len(S_path))
-print('S_T', np.array(S_path).mean())
+print(bt2.get_option_premium('P', 'american'))
+
+bt2 = BinominalTree(50,52,2,0.223144,0.05,500)
+
+print(bt2.get_option_premium('P', 'american'))
