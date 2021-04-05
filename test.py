@@ -3,7 +3,7 @@ from impliedvol import ImpliedVolatilityEstimator
 from controlvariate import GeometricAsianOptionPricer, GeometricAsianOptionBasketPricer
 from montecarlo import MonteCarloSimulator
 
-def test_blackscholesextendedmodel():
+def test():
     # maximum difference from true values
     max_delta = 1e-4
 
@@ -59,5 +59,5 @@ def test_blackscholesextendedmodel():
     print('Test 6 passed')    
 
     
-test_blackscholesextendedmodel()
+test()
 
