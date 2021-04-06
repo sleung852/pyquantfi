@@ -85,7 +85,7 @@ class MonteCarloSimulator:
         self.run_simulation()
         if mode == 'mc':
             return self.standard_monte_carlo()
-        return self.control_variate('K')
+        return self.control_variate('P')
 
     def get_option_premium(self, kind ='C', mode='mc'):
         assert mode in ['mc', 'cv'], 'mode must be either "mc" or "cv"'

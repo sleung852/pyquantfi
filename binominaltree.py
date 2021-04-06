@@ -81,9 +81,14 @@ class BinominalTree:
         return self.get_option_premium(kind='P', option_type=option_type)
 
     def get_option_premium(self, kind='C', option_type = 'american'):
+        assert option_type in ['american', 'european']
+        assert kind in ['P', 'C']
         leaves = self._get_leaves_values(kind=kind)
         S_values = self._get_all_S_values()
         option_values = leaves
         while len(option_values) != 1:
             option_values, S_values = self._get_values_at_t(option_values, S_values, kind=kind, option_type=option_type)
         return option_values[0]
+
+    def visualise(self, kind='C', option_type='american'):
+        pass

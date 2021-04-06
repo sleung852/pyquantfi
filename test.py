@@ -2,31 +2,38 @@ from blackscholes import EuropeanOptionPricer
 from impliedvol import ImpliedVolatilityEstimator
 from controlvariate import GeometricAsianOptionPricer, GeometricAsianOptionBasketPricer
 from montecarlo import MonteCarloSimulator
+from binominaltree import BinominalTree
+
+def condition_test(derived_val, expected_val, test_no, max_delta = 1e-4):
+    global count
+    global score
+    
+    count += 1
+    print('Expected Answer:', expected_val)
+    print('Derived Answer:', derived_val)
+    test_str = 'Test {}'.format(test_no)
+    if abs(derived_val - expected_val) < max_delta:
+        print('{} passed'.format(test_str))
+        score += 1
+    else:
+        print('{} failed'.format(test_str))
 
 def test():
     # maximum difference from true values
-    max_delta = 1e-4
-
-
+    
     print('Test 1: Vanila Option Pricing')
-    OPTION_VALUE = 0.48413599739115154
-    SIGMA = 0.3
+    TEST_1_OPTION_VALUE = 0.48413599739115154 # from lecture 4 slide 21
+    SIGMA = 0.3 # from lecture 4 slide 22
     bs_test = EuropeanOptionPricer(2, 2, 3, SIGMA, 0.03, 0)
-    print('Expected Answer:  ', OPTION_VALUE) # from lecture 4 slide 21
     derived_option_value = bs_test.get_call_premium()
-    print('Calculated Answer:', derived_option_value)
-    assert abs(derived_option_value - OPTION_VALUE) < max_delta, "Test 1 Failed"
-    print('Test 1 passed')
+    condition_test(derived_option_value, TEST_1_OPTION_VALUE, '1')
     
     print('\nTest 2: Newtons Method for Implied Volatility')
-    print('Expected Answer:  ', SIGMA) # from lecture 4 slide 22
     iv_test = ImpliedVolatilityEstimator(2, 2, 3, 0.03, 0)
-    derived_sigma = iv_test.get_implied_vol(OPTION_VALUE, 'C')
-    print('Calculated Answer:', derived_sigma) 
-    assert abs(derived_sigma - SIGMA) < max_delta, "Test 2 Failed"
-    print('Test 2 passed')
+    derived_sigma = iv_test.get_implied_vol(TEST_1_OPTION_VALUE, 'C')
+    condition_test(derived_sigma, SIGMA, '2')
 
-    print('\nTest 3: Control Variant Method for Geometric Asian Option')
+    print('\nTest 3: Closed Form for Geometric Asian Option')
     print('Expected Answer:  ', '?') # from lecture 5 slide 17
     geo_test = GeometricAsianOptionPricer(4, 4, 1e-2, 0.25, 0.03, 1/1e-2)
     derived_option_value = geo_test.get_call_premium()
@@ -34,30 +41,49 @@ def test():
     # assert True, "Test 3 Failed"
     print('Test 3 passed')
 
-    print('\nTest4: Monte Carlo Standard estimation for Arithematic Asian Option')
-    mcs_test = MonteCarloSimulator(4, 0.25, 0.03, 1e-2, 4, 1/1e-2, 1e4)
+    print('\nTest 4a: Monte Carlo Standard estimation for Arithematic Asian Call Option')
+    mcs_test = MonteCarloSimulator(100, 0.3, 0.05, 3, 100, 50, 1e5)
+    TEST_4A_EXPECTED_ANSWER = 14.767
     mu_hat, sigma_hat, ci = mcs_test.get_call_premium()
-    print('Calculated Answer:', mu_hat, sigma_hat, ci )
-    print('Test 4 passed')
+    condition_test(mu_hat, TEST_4A_EXPECTED_ANSWER, '4a')
 
-    print('\nTest5: Monte Carlo Control Variate estimation for Arithematic Asian Option')
-    # TEST_5_ANSWER = 0.26
-    # print('Expected Answer:  ', TEST_5_ANSWER)
-    mcs_test = MonteCarloSimulator(4, 0.25, 0.03, 1e-2, 4, 1/1e-2, 1e4)
+    print('\nTest 4b: Monte Carlo Standard estimation for Arithematic Asian Put Option')
+    mcs_test = MonteCarloSimulator(100, 0.3, 0.05, 3, 100, 50, 1e5)
+    TEST_4B_EXPECTED_ANSWER = 7.7533
+    mu_hat, sigma_hat, ci = mcs_test.get_put_premium()
+    condition_test(mu_hat, TEST_4B_EXPECTED_ANSWER, '4b')
+
+    print('\nTest 4c: Monte Carlo Control Variate estimation for Arithematic Asian Call Option')
+    mcs_test = MonteCarloSimulator(100, 0.3, 0.05, 3, 100, 50, 1e5)
+    TEST_4C_EXPECTED_ANSWER = 14.767
     mu_hat, sigma_hat, ci = mcs_test.get_call_premium('cv')
-    print('Calculated Answer:', mu_hat, sigma_hat, ci )
-    # assert abs(mu_hat - TEST_5_ANSWER) < max_delta, "Test 5 Failed"
-    print('Test 5 passed')
+    condition_test(mu_hat, TEST_4C_EXPECTED_ANSWER, '4c')
 
-    print('\nTest6: Control Variant Method for Basket Geometric Asian Option')
-    # TEST_5_ANSWER = 0.26
-    # print('Expected Answer:  ', TEST_5_ANSWER)
-    mcs_test = GeometricAsianOptionBasketPricer(4, 0.25, 0.03, 1e-2, 4, 1/1e-2, 1e4)
-    mu_hat, sigma_hat, ci = mcs_test.get_call_premium('cv')
-    print('Calculated Answer:', mu_hat, sigma_hat, ci )
-    # assert abs(mu_hat - TEST_5_ANSWER) < max_delta, "Test 5 Failed"
-    print('Test 6 passed')    
+    print('\nTest 4d: Monte Carlo Control Variate estimation for Arithematic Asian Put Option')
+    mcs_test = MonteCarloSimulator(100, 0.3, 0.05, 3, 100, 50, 1e5)
+    TEST_4D_EXPECTED_ANSWER = 7.7533
+    mu_hat, sigma_hat, ci = mcs_test.get_put_premium('cv')
+    condition_test(mu_hat, TEST_4D_EXPECTED_ANSWER, '4d')
 
+    print('\nTest 5a: Binominal Tree for European Option')
+    bt_test1 = BinominalTree(2, 2, 3, SIGMA, 0.03, 100)
+    bt_test2 = BinominalTree(2, 2, 3, SIGMA, 0.03, 99)
+    bt_euro1 = bt_test1.get_call_premium(option_type='european')
+    bt_euro2 = bt_test2.get_call_premium(option_type='european')
+    bt_euro = (bt_euro1 + bt_euro2)/2
+    condition_test(bt_euro, TEST_1_OPTION_VALUE, '5a')
     
-test()
+    print('\nTest 5b: Binominal Tree for American Option')
+    print('...')
+
+    print('\n***RESULT***')
+    print('Score ({}/{})'.format(score,count))
+
+if __name__ == '__main__':
+    
+    global count
+    global score
+    count = 0
+    score = 0
+    test()
 
