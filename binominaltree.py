@@ -49,14 +49,14 @@ class BinominalTree:
         """
         This obtains all the S values in the trees from t=0 until t=T-1
         """
-        S_values = [self.S]
+        S_values = [[self.S]]
         # if it is a one-step model
         if self.n == 1:
             return S_values
         # if it is a 2+ steps model
-        for i in range(1, self.n+1):
+        for i in range(1, self.n):
             S_values_at_t = []
-            for j in range(i): # until t = T-1
+            for j in range(i+1): # until t = T-1
                 S_values_at_t.append(self.u**(i - j) * self.d**(j) * self.S)
             S_values.append(S_values_at_t)
         return S_values
@@ -66,6 +66,7 @@ class BinominalTree:
         for i in range(len(leaves) - 1):
             discounted_option_value = math.exp(-self.r * self.deltaT) *(leaves[i]*self.p + leaves[i+1]*(1-self.p))
             if (option_type == 'american') and (kind == 'P'):
+                print(S_values[-1][i], self.K)
                 option_values.append(max(discounted_option_value, self._get_put_value(S_values[-1][i], self.K)))
             else:
                 option_values.append(discounted_option_value)

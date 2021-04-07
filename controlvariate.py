@@ -2,35 +2,41 @@ from utils import _N, sum_sum_product, product
 import math
 
 class GeometricAsianOptionPricer:
-    def __init__(self, S, K, deltaT, sigma, r, n):
+    def __init__(self, S, K, T, sigma, r, n):
         self.S = S
         self.K = K
-        self.deltaT = deltaT
+        self.T = T
         self.sigma = sigma
         self.r = r
         self.n = n
         self.sigma_hat = self._sigma_hat()
         self.mu_hat = self._mu_hat()
+        # print('S:', self.S)
+        # print('K:', self.K)
+        # print('T:', self.T)
+        # print('sigma:', self.sigma)
+        # print('r:', self.r)
+        # print('n:', self.n)
 
     def _sigma_hat(self):
-        return self.sigma * math.sqrt((self.n+1)*(2*self.n+1)/(6*self.n*self.n))
+        return self.sigma * math.sqrt((self.n+1)*(2*self.n+1)/(6*self.n**2))
 
     def _mu_hat(self):
         return (self.r - 0.5 * self.sigma**2)*(self.n+1)/(2*self.n) + 0.5*(self.sigma_hat**2)
 
     def _d1_hat(self):
-        return (math.log(self.S/self.K) + (self.mu_hat + 0.5 * self.sigma_hat**2)*self.deltaT /
-        (self.sigma*math.sqrt(self.deltaT)))
+        return (math.log(self.S/self.K) + (self.mu_hat + 0.5 * self.sigma_hat**2)*self.T /
+        (self.sigma_hat*math.sqrt(self.T)))
 
     def _d2_hat(self):
-        return self._d1_hat() - self.sigma_hat*math.sqrt(self.deltaT)
+        return self._d1_hat() - self.sigma_hat*math.sqrt(self.T)
 
     def get_call_premium(self):
-        c = math.exp(-self.r * self.deltaT) * (self.S*math.exp(self.mu_hat*self.deltaT)*_N(self._d1_hat()) - self. K*_N(self._d2_hat())) 
+        c = math.exp(-self.r * self.T) * (self.S*math.exp(self.mu_hat*self.T)*_N(self._d1_hat()) - self. K*_N(self._d2_hat())) 
         return c
 
     def get_put_premium(self):
-        p = math.exp(-self.r * self.deltaT) * (-1 * self.S*math.exp(self.mu_hat*self.deltaT)*_N(self._d1_hat(), -1) + self. K * _N(self._d2_hat(), -1)) 
+        p = math.exp(-self.r * self.T) * (-1 * self.S*math.exp(self.mu_hat*self.T)*_N(self._d1_hat(), -1) + self. K * _N(self._d2_hat(), -1)) 
         return p
 
     def get_option_premium(self, kind ='C'):
@@ -93,3 +99,42 @@ class GeometricAsianOptionBasketPricer:
         if kind == 'C':
             return self.get_call_premium()
         return self.get_put_premium()
+
+
+class GeometricAsianOptionPricer2:
+    def __init__(self, S, K, T, sigma, r, n):
+        self.S = S
+        self.K = K
+        self.T = T
+        self.deltaT = T/n
+        self.sigma = sigma
+        self.r = r
+        self.n = n
+        self.sigmasq_T = self._sigma_hat()
+        self.mu_T = self._mu_hat()
+
+    def _sigma_hat(self):
+        return self.sigma**2 * self.T * (self.n+1)*(2*self.n+1)/(6*self.n**2)
+
+    def _mu_hat(self):
+        return ((0.5 * self.sigmasq_T) + (self.r - 0.5*self.sigma**2) * self.T * (self.n + 1))/(2*self.n)
+
+    def _d1_hat(self):
+        return ((math.log(self.S/self.K)) + (self.mu_T + 0.5*self.sigmasq_T))/(math.sqrt(self.sigmasq_T))
+
+    def _d2_hat(self):
+        return self._d1_hat() - math.sqrt(self.sigmasq_T)
+
+    def get_call_premium(self):
+        c = math.exp(-self.r * self.deltaT) * (self.S*math.exp(self.mu_T)*_N(self._d1_hat()) - self.K*_N(self._d2_hat())) 
+        return c
+
+    def get_put_premium(self):
+        p = math.exp(-self.r * self.deltaT) * (-1 * self.S*math.exp(self.mu_T*self.deltaT)*_N(self._d1_hat(), -1) + self. K * _N(self._d2_hat(), -1)) 
+        return p
+
+    def get_option_premium(self, kind ='C'):
+        assert kind in ['C', 'P'], "Incorrect kind. Can only be 'call' or 'put'"
+        if kind == 'C':
+            return self.get_call_premium()
+        return self.get_put_premium()    
