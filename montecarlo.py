@@ -5,7 +5,7 @@ import numpy as np
 from utils import confidence_interval, psuedo_rand_no, product
 
 class MonteCarloSimulator:
-    def __init__(self, S, sigma, r, T, K, n, m, seed=1126):
+    def __init__(self, S, sigma, r, T, K, n, m, seed=123):
         """
         m is the no of paths
         """
@@ -68,8 +68,8 @@ class MonteCarloSimulator:
         assert self.geo_payoffs.shape[0] == self.m
         assert self.arith_payoffs.shape[0] == self.m
 
-class MonteCarloSimulator2:
-    def __init__(self, Ss, sigmas, r, T, K, n, m, seed=1126):
+class MonteCarloBasketSimulator:
+    def __init__(self, Ss, sigmas, r, T, K, n, m, seed=123):
         """
         m is the no of paths
         """
@@ -98,101 +98,19 @@ class MonteCarloSimulator2:
         np.random.seed(seed)
 
     def run_simulation(self, kind='C'):
-        drifts = []
-        for i in range(len(self.Ss)):
-            drifts.append(math.exp((self.r - 0.5*(self.sigmas[i]**2))*self.deltaT))
 
         geo_payoffs_list = []
         arith_payoffs_list = []
-        # for m in M sequences
-        for _ in range(int(self.m)):
-            Ba_t_path = []
-            Bg_t_path = []
-            Ss_t = []
-            Ss_m1t = []
-            # initialise first element of the Bg and Bs arrays
-            for i in range(len(self.Ss)):    
-                growth_factor = drifts[i] * math.exp(self.sigmas[i] * math.sqrt(self.deltaT)*np.random.normal())
-                S_t = self.Ss[i] * growth_factor
-                Ss_t.append(S_t)
-            Ss_m1t = Ss_t
-            Ba_t_path.append(sum(Ss_t)/len(Ss_t))
-            Bg_t_path.append(product(Ss_t)**(1/len(Ss_t)))
-            # continue looping through the arrays
-            for _ in range(int(self.n-1)):
-                Ss_t = []
-                for i in range(len(self.Ss)):
-                    growth_factor = drifts[i] * math.exp(self.sigmas[i] * math.sqrt(self.deltaT)*np.random.normal())
-                    Ss_t.append(growth_factor * Ss_m1t[i])
-                Ss_m1t = Ss_t
-                Ba_t_path.append(sum(Ss_t)/len(Ss_t))
-                Bg_t_path.append(product(Ss_t)**(1/len(Ss_t)))
-
-            assert len(Ba_t_path) == self.n, "len(Ba_t_path): {}".format(len(Ba_t_path), self.m)
-            assert len(Bg_t_path) == self.n, "len(Bg_t_path): {}".format(len(Bg_t_path), self.m)
-            
-            Ba_t_path = np.array(Ba_t_path)
-            Bg_t_path = np.array(Bg_t_path)
-
-            arith_mean = Ba_t_path.mean()
-            geo_mean = product(Bg_t_path)**(1/len(Bg_t_path))
-
-            if kind == 'C':
-                arith_payoff = math.exp(-self.r * self.T) * max(arith_mean - self.K, 0)
-                geo_payoff = math.exp(-self.r * self.T) * max(geo_mean - self.K, 0)
-            else:
-                arith_payoff = math.exp(-self.r * self.T) * max(self.K - arith_mean, 0)
-                geo_payoff = math.exp(-self.r * self.T) * max(self.K - geo_mean, 0)
-
-            arith_payoffs_list.append(arith_payoff)
-            geo_payoffs_list.append(geo_payoff)
-            
-        self.geo_payoffs = np.array(geo_payoffs_list)
-        self.arith_payoffs = np.array(arith_payoffs_list)
-
-        assert self.geo_payoffs.shape[0] == self.m
-        assert self.arith_payoffs.shape[0] == self.m
-
-class MonteCarloSimulator3:
-    def __init__(self, Ss, sigmas, r, T, K, n, m, seed=1126):
-        """
-        m is the no of paths
-        """
-        assert len(Ss) == len(sigmas)
-        self.Ss = Ss
-        self.sigmas = sigmas
-        self.r = r
-        self.T = T
-        self.K = K
-        self.n = n
-        self.m = m
-
-        # print('S:', self.S)
-        # print('K:', self.K)
-        # print('T:', self.T)
-        # print('sigma:', self.sigma)
-        # print('r:', self.r)
-        # print('n:', self.n)
-        # print('m:', self.m)
-
-        self.deltaT = self.T/self.n
-
-        self.geo_payoffs = None
-        self.arith_payoffs = None
-
-        np.random.seed(seed)
-
-    def run_simulation(self, kind='C'):
         drifts = []
+        
+        # prepare drift for each S
         for i in range(len(self.Ss)):
             drifts.append(math.exp((self.r - 0.5*(self.sigmas[i]**2))*self.deltaT))
-
-        geo_payoffs_list = []
-        arith_payoffs_list = []
+        
         # for m in M sequences
         for _ in range(int(self.m)):
-            Ss_t = []
-            Ss_m1t = []
+            Ss_t = [] # for keeping track of the current S_ts
+            Ss_m1t = [] # for keeping track of the t-1 value of Ss
             # initialise first element of the Bg and Bs arrays
             for i in range(len(self.Ss)):    
                 growth_factor = drifts[i] * math.exp(self.sigmas[i] * math.sqrt(self.deltaT)*np.random.normal())
@@ -206,7 +124,8 @@ class MonteCarloSimulator3:
                     growth_factor = drifts[i] * math.exp(self.sigmas[i] * math.sqrt(self.deltaT)*np.random.normal())
                     Ss_t.append(growth_factor * Ss_m1t[i])
                 Ss_m1t = Ss_t
-            
+
+            assert len(Ss_t) == len(self.Ss)
             Ss_t = np.array(Ss_t)
 
             Ba_T = Ss_t.mean()

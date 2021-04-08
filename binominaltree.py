@@ -66,7 +66,6 @@ class BinominalTree:
         for i in range(len(leaves) - 1):
             discounted_option_value = math.exp(-self.r * self.deltaT) *(leaves[i]*self.p + leaves[i+1]*(1-self.p))
             if (option_type == 'american') and (kind == 'P'):
-                print(S_values[-1][i], self.K)
                 option_values.append(max(discounted_option_value, self._get_put_value(S_values[-1][i], self.K)))
             else:
                 option_values.append(discounted_option_value)
