@@ -2,7 +2,6 @@ from blackscholes import EuropeanOptionPricer
 from impliedvol import ImpliedVolatilityEstimator
 from asianoptionpricer import GeometricAsianOptionPricer, ArithmeticAsianOptionPricer
 from basketoptionpricer import ArithmeticBasketOptionBasketPricer, GeometricBasketOptionPricer
-from montecarlo import MonteCarloSimulator
 from binominaltree import BinominalTree
 
 def condition_test(derived_val, expected_val, max_delta = 1e-4):

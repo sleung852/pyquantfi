@@ -86,7 +86,6 @@ class ArithmeticAsianOptionPricer:
 
         self.mcs = MonteCarloSimulator(S, sigma, r, T, K, n, m, seed)
 
-
     def standard_monte_carlo(self):
         # standard monte carlo
         P_mean = self.mcs.arith_payoffs.mean()
