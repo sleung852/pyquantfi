@@ -37,7 +37,7 @@ class OptionPricerGUI:
         self.mainframe.pack(pady = 20, padx = 20)
 
     def _reset_stored_values(self):
-        self.storage = {i: 0 for i in ['S','sigma', 'S1', 'S2', 'K', 'T', 'sigma1', 'sigma2', 'r', 'rho', 'n', 'm']}
+        self.storage = {i: [-1, None] for i in ['S','sigma', 'S1', 'S2', 'K', 'T', 'sigma1', 'sigma2', 'r', 'rho', 'n', 'm']}
 
     """
     Layer 0
@@ -252,6 +252,7 @@ class OptionPricerGUI:
             label_temp.grid(row = row_counter, column = 1)
             entry_temp = Entry(self.mainframe, width=5)
             entry_temp.grid(row = row_counter, column = 2)
+            self.storage[input_string][1] = entry_temp 
             self._second_layer_choice.append(label_temp)
             self._second_layer_choice.append(entry_temp)
             row_counter+=1
@@ -260,10 +261,32 @@ class OptionPricerGUI:
         button_confirm.grid(row=row_counter, column=1)
         self._second_layer_choice.append(button_confirm)
         
+    def _check_storage_is_empty(self):
+        """
+        To check whether 
+        """
+        for key, values in self.storage.items():
+            if values[1] is not None:
+                return False
+        return True
+
+    def _get_storage_valid_keys(self):
+        valid_keys = []
+        for key, values in self.storage.items():
+            if values[1] is not None:
+                valid_keys.append(key)
+        return valid_keys
+
+    def _get_values(self):
+        valid_keys = self._get_storage_valid_keys()
+        for key in valid_keys:
+            self.storage[key][0] = self.storage[key][1].get()
 
     def calculate(self):
         print('Gather parameters')
+        self._get_values()
         print('Print text calculating')
+        Label(self.mainframe, text='Loading', '')
         print('Run functions')
         print('Print values')
 
