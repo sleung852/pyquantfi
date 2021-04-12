@@ -1,6 +1,9 @@
 from scipy import stats
 from itertools import permutations
 import math
+import numpy as np
+import ghalton
+import sobol_seq
 
 
 def _N(dx, sign=1):
@@ -31,10 +34,21 @@ def product(items):
 
 def confidence_interval(mu, sigma, M, level=0.95):
     # extension is needed to enable different confidence level
-    return [mu - 1.96*sigma/math.sqrt(M), mu + 1.96*sigma/math.sqrt(M)]
+    p = stats.norm.ppf(level)
+    return [mu - p*sigma/math.sqrt(M), mu + p*sigma/math.sqrt(M)]
 
-def psuedo_rand_no():
-    return random.normal()
+def psuedo_rand_num_generator(size, seed=1126):
+    np.random.seed(seed)
+    return np.random.normal(size=size)
 
-def quasi_rand_no():
-    pass
+def quasi_rand_num_generator(size, seed=1126):
+    seqr = ghalton.GeneralizedHalton(1, seed)
+    X = np.array(seqr.get(size))
+    Z = [z[0] for z in stats.norm.ppf(X)]
+    return Z
+
+def quasi_rand_num_generator2(size, seed=1126):
+    seqr = ghalton.GeneralizedHalton(1, seed)
+    X = np.array(seqr.get(size))
+    Z = [z[0] for z in stats.norm.ppf(X)]
+    return Z

@@ -59,49 +59,49 @@ def test():
     print(f'\nTest {count}: Monte Carlo Standard estimation for Arithematic Asian Call Option')
     mcs_test = ArithmeticAsianOptionPricer(100, 0.3, 0.05, 3, 100, 50, 1e5)
     TEST_4A_EXPECTED_ANSWER = 14.767
-    mu_hat, sigma_hat, ci = mcs_test.get_call_premium()
+    mu_hat = mcs_test.get_call_premium()
     condition_test(mu_hat, TEST_4A_EXPECTED_ANSWER, 0.5)
 
     print(f'\nTest {count}: Monte Carlo Standard estimation for Arithematic Asian Put Option')
     mcs_test = ArithmeticAsianOptionPricer(100, 0.3, 0.05, 3, 100, 50, 1e5)
     TEST_4B_EXPECTED_ANSWER = 7.7533
-    mu_hat, sigma_hat, ci = mcs_test.get_put_premium()
+    mu_hat = mcs_test.get_put_premium()
     condition_test(mu_hat, TEST_4B_EXPECTED_ANSWER, 0.5)
 
     print(f'\nTest {count}: Monte Carlo Control Variate estimation for Arithematic Asian Call Option')
     mcs_test = ArithmeticAsianOptionPricer(100, 0.3, 0.05, 3, 100, 50, 1e5)
     TEST_4C_EXPECTED_ANSWER = 14.767
-    mu_hat, sigma_hat, ci = mcs_test.get_call_premium('cv')
+    mu_hat = mcs_test.get_call_premium('cv')
     condition_test(mu_hat, TEST_4C_EXPECTED_ANSWER, 0.5)
 
     print(f'\nTest {count}: Monte Carlo Control Variate estimation for Arithematic Asian Put Option')
     mcs_test = ArithmeticAsianOptionPricer(100, 0.3, 0.05, 3, 100, 50, 1e5)
     TEST_4D_EXPECTED_ANSWER = 7.7533
-    mu_hat, sigma_hat, ci = mcs_test.get_put_premium('cv')
+    mu_hat = mcs_test.get_put_premium('cv')
     condition_test(mu_hat, TEST_4D_EXPECTED_ANSWER, 0.5)
 
     print(f'\nTest {count}: Monte Carlo Standard estimation for Arithematic Basket Asian Call Option')
     mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 50, 1e5)
     TEST_4A_EXPECTED_ANSWER = 24.345
-    mu_hat, sigma_hat, ci = mcs_test.get_call_premium()
+    mu_hat = mcs_test.get_call_premium()
     condition_test(mu_hat, TEST_4A_EXPECTED_ANSWER, 0.5)
 
     print(f'\nTest {count}: Monte Carlo Standard estimation for Arithematic Basket Asian Put Option')
     mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 50, 1e5)
     TEST_4B_EXPECTED_ANSWER = 10.629
-    mu_hat, sigma_hat, ci = mcs_test.get_put_premium()
+    mu_hat = mcs_test.get_put_premium()
     condition_test(mu_hat, TEST_4B_EXPECTED_ANSWER, 0.5)
 
     print(f'\nTest {count}: Monte Carlo Control Variate estimation for Arithematic Basket Asian Call Option')
     mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 50, 1e5)
     TEST_4C_EXPECTED_ANSWER = 24.508
-    mu_hat, sigma_hat, ci = mcs_test.get_call_premium('cv')
+    mu_hat = mcs_test.get_call_premium('cv')
     condition_test(mu_hat, TEST_4C_EXPECTED_ANSWER, 0.5)
 
     print(f'\nTest {count}: Monte Carlo Control Variate estimation for Arithematic Basket Asian Put Option')
     mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 50, 1e5)
     TEST_4D_EXPECTED_ANSWER = 10.558
-    mu_hat, sigma_hat, ci = mcs_test.get_put_premium('cv')
+    mu_hat = mcs_test.get_put_premium('cv')
     condition_test(mu_hat, TEST_4D_EXPECTED_ANSWER, 0.5) 
 
     print(f'\nTest {count}: Binominal Tree for European Call Option')

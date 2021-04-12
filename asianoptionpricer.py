@@ -113,18 +113,18 @@ class ArithmeticAsianOptionPricer:
         assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         self.mcs.run_simulation()
         if method == 'mc':
-            return self.standard_monte_carlo()
-        return self.control_variate('C')
+            return self.standard_monte_carlo()[0]
+        return self.control_variate('C')[0]
 
     def get_put_premium(self, method='mc'):
         assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         self.mcs.run_simulation('P')
         if method == 'mc':
-            return self.standard_monte_carlo()
-        return self.control_variate('P')
+            return self.standard_monte_carlo()[0]
+        return self.control_variate('P')[0]
 
     def get_option_premium(self, kind ='C', method='mc'):
         assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         if kind == 'C':
             return self.get_call_premium(method=method)
-        return self.get_put_premium(method=method)   
+        return self.get_put_premium(method=method)

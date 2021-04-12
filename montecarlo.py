@@ -2,7 +2,7 @@
 import math
 from statistics import mean, stdev
 import numpy as np
-from utils import confidence_interval, psuedo_rand_no, product
+from utils import confidence_interval, product, quasi_rand_num_generator
 
 class MonteCarloSimulator:
     def __init__(self, S, sigma, r, T, K, n, m, seed=123):
@@ -31,20 +31,21 @@ class MonteCarloSimulator:
         self.arith_payoffs = None
 
         np.random.seed(seed)
+        self.seed = seed
 
-    def run_simulation(self, kind='C'):
+    def run_simulation(self, kind='C', rand_type='psuedo'):
         drift = math.exp((self.r - 0.5*(self.sigma**2))*self.deltaT)
-
         geo_payoffs_list = []
         arith_payoffs_list = []
         # for m in M sequences
-        for _ in range(int(self.m)):     
-
-            growth_factor = drift * math.exp(self.sigma * math.sqrt(self.deltaT)*np.random.normal())
+        for _ in range(int(self.m)):
+            # Z = np.random.normal(size =self.n)
+            Z = quasi_rand_num_generator(size=self.n, seed =self.seed)
+            growth_factor = drift * math.exp(self.sigma * math.sqrt(self.deltaT)*Z[0])
             S_t = self.S * growth_factor
             S_path = [S_t]
-            for _ in range(int(self.n-1)):
-                growth_factor = drift * math.exp(self.sigma * math.sqrt(self.deltaT)*np.random.normal())
+            for i in range(1, int(self.n)):
+                growth_factor = drift * math.exp(self.sigma * math.sqrt(self.deltaT)*Z[i])
                 S_path.append(growth_factor * S_t)
                 S_t = growth_factor * S_t
             assert len(S_path) == self.n, "len(S_path): {}".format(len(S_path), self.m)
@@ -61,7 +62,10 @@ class MonteCarloSimulator:
 
             arith_payoffs_list.append(arith_payoff)
             geo_payoffs_list.append(geo_payoff)
-            
+        
+        print(self.geo_payoffs)
+        print(self.arith_payoffs)
+
         self.geo_payoffs = np.array(geo_payoffs_list)
         self.arith_payoffs = np.array(arith_payoffs_list)
 

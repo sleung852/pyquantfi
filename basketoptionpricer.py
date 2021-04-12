@@ -32,7 +32,13 @@ class GeometricBasketOptionPricer:
 
     def _sigma_Bg(self):
         # return math.sqrt(sum_sum_product(self.sigmas, self.rhos)) / self.n
-        v = self.sigmas[0]**2 * 1 + 2 * self.sigmas[0] * self.sigmas[1] * self.rhos[0] + self.sigmas[1]**2 * 1
+        if len(self.rhos) == 1:
+            v = self.sigmas[0]**2 * 1 + 2 * self.sigmas[0] * self.sigmas[1] * self.rhos[0] + self.sigmas[1]**2 * 1
+        else:
+            v = 0
+            for i in len(self.sigmas):
+                for j in len(self.sigmas):
+                    v += self.sigmas[i] * self.sigmas[j] * self.rhos[i][j]
         return math.sqrt(v)/self.n
 
     def _mu_Bg(self):
@@ -110,6 +116,7 @@ class ArithmeticBasketOptionBasketPricer:
         P_mean = self.mcs.arith_payoffs.mean()
         P_std = self.mcs.arith_payoffs.std()
         return P_mean, P_std, confidence_interval(P_mean, P_std, self.m)
+        # return P_mean
 
     def control_variate(self, kind='C'):
         conv_XY = (self.mcs.arith_payoffs * self.mcs.geo_payoffs).mean() - self.mcs.arith_payoffs.mean() * self.mcs.geo_payoffs.mean()
@@ -123,22 +130,22 @@ class ArithmeticBasketOptionBasketPricer:
         Z = self.mcs.arith_payoffs + theta * (geo - self.mcs.geo_payoffs)
         Z_mean = Z.mean()
         Z_std = Z.std()
-
         return Z_mean, Z_std, confidence_interval(Z_mean, Z_std, self.m)
+
 
     def get_call_premium(self, method='mc'):
         assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         self.mcs.run_simulation()
         if method == 'mc':
-            return self.standard_monte_carlo()
-        return self.control_variate('C')
+            return self.standard_monte_carlo()[0]
+        return self.control_variate('C')[0]
 
     def get_put_premium(self, method='mc'):
         assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         self.mcs.run_simulation('P')
         if method == 'mc':
-            return self.standard_monte_carlo()
-        return self.control_variate('P')
+            return self.standard_monte_carlo()[0]
+        return self.control_variate('P')[0]
 
     def get_option_premium(self, kind ='C', method='mc'):
         assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
