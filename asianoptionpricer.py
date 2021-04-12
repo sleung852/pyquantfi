@@ -5,6 +5,13 @@ from montecarlo import MonteCarloSimulator, MonteCarloBasketSimulator
 
 class GeometricAsianOptionPricer:
     def __init__(self, S, K, T, sigma, r, n):
+
+        # print('S:', S)
+        # print('K:', K)
+        # print('T:', T)
+        # print('sigma:', sigma)
+        # print('r:', r)
+        # print('n:', n)
         self.S = S
         self.K = K
         self.T = T
@@ -13,12 +20,7 @@ class GeometricAsianOptionPricer:
         self.n = int(n)
         self.sigma_hat = self._sigma_hat()
         self.mu_hat = self._mu_hat()
-        # print('S:', self.S)
-        # print('K:', self.K)
-        # print('T:', self.T)
-        # print('sigma:', self.sigma)
-        # print('r:', self.r)
-        # print('n:', self.n)
+
 
     def _sigma_hat(self):
         return self.sigma * math.sqrt((self.n+1)*(2*self.n+1)/(6*self.n**2))
@@ -41,7 +43,7 @@ class GeometricAsianOptionPricer:
         else:
             if m is None:
                 m = 100000
-            self.mcs = MonteCarloSimulator(self.S, self.sigma, self.r, self.T, self.K, self.n, m)
+            self.mcs = MonteCarloSimulator(self.S, self.sigma, self.r, self.T, self.K, self.n, int(m))
             self.mcs.run_simulation('C')
             P_mean, _, _ = self.standard_monte_carlo(m)
             return P_mean
@@ -107,22 +109,22 @@ class ArithmeticAsianOptionPricer:
         
         return Z_mean, Z_std, confidence_interval(Z_mean, Z_std, self.m)
 
-    def get_call_premium(self, mode='mc'):
-        assert mode in ['mc', 'cv'], 'mode must be either "mc" or "cv"'
+    def get_call_premium(self, method='mc'):
+        assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         self.mcs.run_simulation()
-        if mode == 'mc':
+        if method == 'mc':
             return self.standard_monte_carlo()
         return self.control_variate('C')
 
-    def get_put_premium(self, mode='mc'):
-        assert mode in ['mc', 'cv'], 'mode must be either "mc" or "cv"'
+    def get_put_premium(self, method='mc'):
+        assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         self.mcs.run_simulation('P')
-        if mode == 'mc':
+        if method == 'mc':
             return self.standard_monte_carlo()
         return self.control_variate('P')
 
-    def get_option_premium(self, kind ='C', mode='mc'):
-        assert mode in ['mc', 'cv'], 'mode must be either "mc" or "cv"'
+    def get_option_premium(self, kind ='C', method='mc'):
+        assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         if kind == 'C':
-            return self.get_call_premium(mode=mode)
-        return self.get_put_premium(mode=mode)   
+            return self.get_call_premium(method=method)
+        return self.get_put_premium(method=method)   

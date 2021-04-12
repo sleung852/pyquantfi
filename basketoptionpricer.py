@@ -126,23 +126,23 @@ class ArithmeticBasketOptionBasketPricer:
 
         return Z_mean, Z_std, confidence_interval(Z_mean, Z_std, self.m)
 
-    def get_call_premium(self, mode='mc'):
-        assert mode in ['mc', 'cv'], 'mode must be either "mc" or "cv"'
+    def get_call_premium(self, method='mc'):
+        assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         self.mcs.run_simulation()
-        if mode == 'mc':
+        if method == 'mc':
             return self.standard_monte_carlo()
         return self.control_variate('C')
 
-    def get_put_premium(self, mode='mc'):
-        assert mode in ['mc', 'cv'], 'mode must be either "mc" or "cv"'
+    def get_put_premium(self, method='mc'):
+        assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         self.mcs.run_simulation('P')
-        if mode == 'mc':
+        if method == 'mc':
             return self.standard_monte_carlo()
         return self.control_variate('P')
 
-    def get_option_premium(self, kind ='C', mode='mc'):
-        assert mode in ['mc', 'cv'], 'mode must be either "mc" or "cv"'
+    def get_option_premium(self, kind ='C', method='mc'):
+        assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
         if kind == 'C':
-            return self.get_call_premium(mode=mode)
-        return self.get_put_premium(mode=mode)  
+            return self.get_call_premium(method=method)
+        return self.get_put_premium(method=method)  
         

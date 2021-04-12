@@ -36,13 +36,13 @@ def test():
 
     print(f'\nTest {count}: Closed Form for Geometric Asian Option')
     TEST_3_EXPECTED_ANSWER = 13.259
-    geo_test = GeometricAsianOptionPricer(100, 100, 0.05, 3, 0.05, 50)
+    geo_test = GeometricAsianOptionPricer(100, 100, 3, 0.3, 0.05, 50)
     derived_option_value = geo_test.get_call_premium()
     condition_test(derived_option_value, TEST_3_EXPECTED_ANSWER, 0.5)
 
     print(f'\nTest {count}: Monte Carlo standard estimation for Geometric Asian Option')
     TEST_3_EXPECTED_ANSWER = 13.286
-    geo_test = GeometricAsianOptionPricer(100, 100, 0.05, 3, 0.05, 50)
+    geo_test = GeometricAsianOptionPricer(100, 100, 3, 0.3, 0.05, 50)
     derived_option_value = geo_test.get_call_premium(method='mcs', m=100000)
     condition_test(derived_option_value, TEST_3_EXPECTED_ANSWER, 0.5)
 

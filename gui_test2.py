@@ -174,7 +174,7 @@ def compute_option_price(option_choice_str, option_method_str, option_kind_str, 
         params_option_kind['method'] = 'mcs'
         params_option_kind['m'] = params['m'] #asdasd
         del params['m']
-        option_calculator = GeometricAsianOptionPricer(*params)
+        option_calculator = GeometricAsianOptionPricer(**params)
         return option_calculator.get_option_premium(**params_option_kind)
 
     elif option_str == 'Arithmetic Asian Monte Carlo':
