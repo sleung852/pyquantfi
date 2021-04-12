@@ -9,7 +9,7 @@ class BinominalTree:
         self.T = T
         self.sigma = sigma
         self.r = r
-        self.n = n
+        self.n = int(n)
 
         self.deltaT = self.T/self.n
 

@@ -100,8 +100,8 @@ class ArithmeticBasketOptionBasketPricer:
             self.rhos = rhos
         else:
             assert False, "Rhos should be either list or int or float"
-        self.m = m
-        self.n = n
+        self.m = int(m)
+        self.n = int(n)
         self.rhos = rhos
         self.mcs = MonteCarloBasketSimulator(Ss, sigmas, r, T, K, n, m)
 

@@ -14,8 +14,8 @@ class MonteCarloSimulator:
         self.r = r
         self.T = T
         self.K = K
-        self.n = n
-        self.m = m
+        self.n = int(n)
+        self.m = int(m)
 
         # print('S:', self.S)
         # print('K:', self.K)
@@ -79,8 +79,8 @@ class MonteCarloBasketSimulator:
         self.r = r
         self.T = T
         self.K = K
-        self.n = n
-        self.m = m
+        self.n = int(n)
+        self.m = int(m)
 
         # print('S:', self.S)
         # print('K:', self.K)

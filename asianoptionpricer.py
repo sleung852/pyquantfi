@@ -10,7 +10,7 @@ class GeometricAsianOptionPricer:
         self.T = T
         self.sigma = sigma
         self.r = r
-        self.n = n
+        self.n = int(n)
         self.sigma_hat = self._sigma_hat()
         self.mu_hat = self._mu_hat()
         # print('S:', self.S)
@@ -80,8 +80,8 @@ class ArithmeticAsianOptionPricer:
         self.r = r
         self.T = T
         self.K = K
-        self.n = n
-        self.m = m
+        self.n = int(n)
+        self.m = int(m)
         self.deltaT = self.T/self.n
 
         self.mcs = MonteCarloSimulator(S, sigma, r, T, K, n, m, seed)
