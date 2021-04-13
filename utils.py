@@ -37,18 +37,11 @@ def confidence_interval(mu, sigma, M, level=0.95):
     p = stats.norm.ppf(level)
     return [mu - p*sigma/math.sqrt(M), mu + p*sigma/math.sqrt(M)]
 
-def psuedo_rand_num_generator(size, seed=1126):
+def psuedo_rand_num_generator(n, m, seed=1126):
     np.random.seed(seed)
-    return np.random.normal(size=size)
+    return np.random.standard_normal((m,n))
 
-def quasi_rand_num_generator(size, seed=1126):
-    seqr = ghalton.GeneralizedHalton(1, seed)
-    X = np.array(seqr.get(size))
-    Z = [z[0] for z in stats.norm.ppf(X)]
-    return Z
-
-def quasi_rand_num_generator2(size, seed=1126):
-    seqr = ghalton.GeneralizedHalton(1, seed)
-    X = np.array(seqr.get(size))
-    Z = [z[0] for z in stats.norm.ppf(X)]
-    return Z
+def quasi_rand_num_generator(n, m, seed=1126):
+    seqr = ghalton.GeneralizedHalton(n, seed)
+    X = np.array(seqr.get(m))
+    return stats.norm.ppf(X)

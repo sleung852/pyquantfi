@@ -32,7 +32,7 @@ class GeometricBasketOptionPricer:
 
     def _sigma_Bg(self):
         # return math.sqrt(sum_sum_product(self.sigmas, self.rhos)) / self.n
-        if len(self.rhos) == 1:
+        if self.rhos.shape[0] == 1:
             v = self.sigmas[0]**2 * 1 + 2 * self.sigmas[0] * self.sigmas[1] * self.rhos[0] + self.sigmas[1]**2 * 1
         else:
             v = 0
@@ -52,7 +52,7 @@ class GeometricBasketOptionPricer:
         return self._d1_hat() - self.sigma_Bg*math.sqrt(self.T)
 
     def get_call_premium(self, method='closed', m=None):
-        assert method in ['closed', 'mcs'], "method must be either 'closed' or 'msc'"
+        assert method in ['closed', 'std_mcs', 'quasi_mcs'], "method must be either 'closed' or 'msc'"
         if method == 'closed':
             c = math.exp(-self.r * self.T) * (self.Bg*math.exp(self.mu_Bg*self.T)*_N(self._d1_hat()) - self. K * _N(self._d2_hat())) 
             return c
@@ -60,12 +60,15 @@ class GeometricBasketOptionPricer:
             if m is None:
                 m = 100000
             self.mcs = MonteCarloBasketSimulator(self.Ss, self.sigmas, self.r, self.T, self.K, self.n, m)
-            self.mcs.run_simulation('C')
+            if method == 'quasi_mcs':
+                self.mcs.run_simulation('C', 'quasi')
+            else:
+                self.mcs.run_simulation('C')
             P_mean, _, _ = self.standard_monte_carlo(m)
             return P_mean
 
-    def get_put_premium(self, method='', m=None):
-        assert method in ['closed', 'mcs'], "method must be either 'closed' or 'msc'"
+    def get_put_premium(self, method='closed', m=None):
+        assert method in ['closed', 'std_mcs', 'quasi_mcs'], "method must be either 'closed', 'std_mcs' or 'quasi_mcs'"
         if method == 'closed':
             p = math.exp(-self.r * self.T) * (-1 * self.Bg*math.exp(self.mu_Bg*self.T)*_N(self._d1_hat(), -1) + self. K * _N(self._d2_hat(), -1)) 
             return p
@@ -73,13 +76,16 @@ class GeometricBasketOptionPricer:
             if m is None:
                 m = 100000
             self.mcs = MonteCarloBasketSimulator(self.Ss, self.sigmas, self.r, self.T, self.K, self.n, m)
-            self.mcs.run_simulation('P')
+            if method == 'quasi_mcs':
+                self.mcs.run_simulation('P', 'quasi')
+            else:
+                self.mcs.run_simulation('P')
             P_mean, _, _ = self.standard_monte_carlo(m)
             return P_mean
 
     def get_option_premium(self, kind ='C', method="closed", m=None):
         assert kind in ['C', 'P'], "Incorrect kind. Can only be 'C' for call or 'P' for put"
-        assert method in ['closed', 'mcs'], "method must be either 'closed' or 'msc'"
+        assert method in ['closed', 'std_mcs', 'quasi_mcs'], "method must be either 'closed', 'std_mcs' or 'quasi_mcs'"
         if kind == 'C':
             return self.get_call_premium(method=method, m=m)
         return self.get_put_premium(method=method, m=m)
@@ -133,22 +139,38 @@ class ArithmeticBasketOptionBasketPricer:
         return Z_mean, Z_std, confidence_interval(Z_mean, Z_std, self.m)
 
 
-    def get_call_premium(self, method='mc'):
-        assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
-        self.mcs.run_simulation()
-        if method == 'mc':
+    def get_call_premium(self, method='std_mcs'):
+        assert method in ['std_mcs', 'std_mcs_cv', 'quasi_mcs', 'quasi_mcs_cv'], 'method must be either "std_mcs", "std_mcs_cv", "quasi_mcs" or "quasi_mcs_cv"'
+        if method == 'std_mcs':
+            self.mcs.run_simulation()
             return self.standard_monte_carlo()[0]
-        return self.control_variate('C')[0]
-
-    def get_put_premium(self, method='mc'):
-        assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
-        self.mcs.run_simulation('P')
-        if method == 'mc':
+        elif method == 'std_mcs_cv':
+            self.mcs.run_simulation()
+            return self.control_variate('C')[0]
+        elif method == 'quasi_mcs':
+            self.mcs.run_simulation('C', 'quasi')
             return self.standard_monte_carlo()[0]
-        return self.control_variate('P')[0]
+        elif method == 'quasi_mcs_cv':
+            self.mcs.run_simulation('C', 'quasi')
+            return self.control_variate('C')[0]
 
-    def get_option_premium(self, kind ='C', method='mc'):
-        assert method in ['mc', 'cv'], 'method must be either "mc" or "cv"'
+    def get_put_premium(self, method='std_mcs'):
+        assert method in ['std_mcs', 'std_mcs_cv', 'quasi_mcs', 'quasi_mcs_cv'], 'method must be either "std_mcs", "std_mcs_cv", "quasi_mcs" or "quasi_mcs_cv"'
+        if method == 'std_mcs':
+            self.mcs.run_simulation('P')
+            return self.standard_monte_carlo()[0]
+        elif method == 'std_mcs_cv':
+            self.mcs.run_simulation('P')
+            return self.control_variate('P')[0]
+        elif method == 'quasi_mcs':
+            self.mcs.run_simulation('P', 'quasi')
+            return self.standard_monte_carlo()[0]
+        elif method == 'quasi_mcs_cv':
+            self.mcs.run_simulation('P', 'quasi')
+            return self.control_variate('P')[0]
+
+    def get_option_premium(self, kind ='C', method='std_mcs'):
+        assert method in ['std_mcs', 'std_mcs_cv', 'quasi_mcs', 'quasi_mcs_cv'], 'method must be either "std_mcs", "std_mcs_cv", "quasi_mcs" or "quasi_mcs_cv"'
         if kind == 'C':
             return self.get_call_premium(method=method)
         return self.get_put_premium(method=method)  

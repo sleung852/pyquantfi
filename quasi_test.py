@@ -1,13 +1,27 @@
-from utils import quasi_rand_num_generator
-import numpy as np 
+import ghalton
+import numpy as np
+from scipy.stats import norm
 
-Z = quasi_rand_num_generator(100)
-Z2 = np.random.normal(size = 100)
+M = 10
 
-count = 0
+N = 6
 
-for i, _ in enumerate(Z):
-    count += 1
-    print(type(Z[i]), type(Z2[i]))
+# for _ in range(M):
+#     seqr = ghalton.GeneralizedHalton(1, 2000)
+#     X = np.array(seqr.get(N))
+#     Z = norm.ppf(X)
+#     print(Z)
 
-print(count)
+seqr = ghalton.GeneralizedHalton(N*2, 2000)
+X = np.array(seqr.get(M))
+Z = norm.ppf(X)
+Z = Z.reshape((M,2,N))
+for i in range(M):
+    print(Z[i])
+    print((Z[i].shape))
+
+# Z = np.random.standard_normal((M,N))
+
+# print(Z.shape)
+
+# print(Z[0])

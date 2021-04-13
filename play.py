@@ -2,6 +2,7 @@ import math
 from scipy.stats import norm
 import ghalton
 import numpy as np
+import matplotlib.pyplot as plt
 
 from blackscholes import EuropeanOptionPricer
 
@@ -30,6 +31,7 @@ seqr = ghalton.GeneralizedHalton(1, seed)
 aMList = []
 aMError = []
 
+# Quasi Monte Carlo
 for M in [1e2, 1e3, 1e4, 1e5, 1e5, 1e6]:
     M = int(M)
     X = np.array(seqr.get(M))
@@ -44,3 +46,26 @@ for M in [1e2, 1e3, 1e4, 1e5, 1e5, 1e6]:
     aMList.append(aM)
     aMError.append(Ctrue - aM)
 
+# Standard Monte Carlo
+
+aMsList = []
+aMsError = []
+for M in [1e2, 1e3, 1e4, 1e5, 1e5, 1e6]:
+    M = int(M)
+    Z = np.random.standard_normal(M)
+    factorArray = std*Z
+    sArray = factor * np.exp(factorArray)
+    payoffArray = sArray - params['K']
+    payoffArray[payoffArray<=0] = 0
+
+    aMs = np.mean(payoffArray) * np.exp(-params['r'] * params['T'])
+    print('smc price is ', aMs)
+    aMsList.append(aMs)
+    aMsError.append(Ctrue - aMs)
+
+plt.plot(aMList)
+plt.plot(aMsList)
+plt.title('Quasi vs Standard Monte Carlo')
+plt.legend(['Quasi', 'Standard'])
+
+plt.show()
