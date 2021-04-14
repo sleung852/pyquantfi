@@ -1,2 +1,0 @@
-from asianoptionpricer import ArithmeticAsianOptionPricer
-
