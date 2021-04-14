@@ -1,0 +1,74 @@
+**Official Test for COMP7405 Assignment 3
+Asian Options
+Test Case 1
+*Parameters*
+Sigma: 0.3, K: 100, n: 50, kind: P
+
+Geometric Asian Option
+Value from Closed Form: 8.482704544877812
+Value from Monte Carlo: 8.441788092812393
+
+Arithmetic Asian Option
+Value from Standard Monte Carlo: 7.744548646343444
+Value from Standard Monte Carlo with CV: 7.803812195885332
+
+Test Case 2
+*Parameters*
+Sigma: 0.3, K: 100, n: 100, kind: P
+
+Geometric Asian Option
+Value from Closed Form: 8.431080155681661
+Value from Monte Carlo: 8.43701672080876
+
+Arithmetic Asian Option
+Value from Standard Monte Carlo: 7.73265771332361
+Value from Standard Monte Carlo with CV: 7.748739168564364
+
+Test Case 3
+*Parameters*
+Sigma: 0.4, K: 100, n: 50, kind: P
+
+Geometric Asian Option
+Value from Closed Form: 12.558769439656004
+Value from Monte Carlo: 12.490923164646496
+
+Arithmetic Asian Option
+Value from Standard Monte Carlo: 11.207129089416512
+Value from Standard Monte Carlo with CV: 11.288492397108246
+
+Test Case 4
+*Parameters*
+Sigma: 0.3, K: 100, n: 50, kind: C
+
+Geometric Asian Option
+Value from Closed Form: 13.25912613053641
+Value from Monte Carlo: 13.44845052385752
+
+Arithmetic Asian Option
+Value from Standard Monte Carlo: 14.868144953495781
+Value from Standard Monte Carlo with CV: 14.737604800363822
+
+Test Case 5
+*Parameters*
+Sigma: 0.3, K: 100, n: 100, kind: C
+
+Geometric Asian Option
+Value from Closed Form: 13.138779114392923
+Value from Monte Carlo: 13.248216306334625
+
+Arithmetic Asian Option
+Value from Standard Monte Carlo: 14.672779371713492
+Value from Standard Monte Carlo with CV: 14.612892534007567
+
+Test Case 6
+*Parameters*
+Sigma: 0.4, K: 100, n: 50, kind: C
+
+Geometric Asian Option
+Value from Closed Form: 15.759819776409662
+Value from Monte Carlo: 16.004756898160426
+
+Arithmetic Asian Option
+Value from Standard Monte Carlo: 18.40480776860484
+Value from Standard Monte Carlo with CV: 18.225479219818194
+

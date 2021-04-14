@@ -39,9 +39,9 @@ def confidence_interval(mu, sigma, M, level=0.95):
 
 def psuedo_rand_num_generator(n, m, seed=1126):
     np.random.seed(seed)
-    return np.random.standard_normal((m,n))
+    return np.random.standard_normal((m,n)).astype(np.float32)
 
 def quasi_rand_num_generator(n, m, seed=1126):
     seqr = ghalton.GeneralizedHalton(n, seed)
     X = np.array(seqr.get(m))
-    return stats.norm.ppf(X)
+    return stats.norm.ppf(X).astype(np.float32)

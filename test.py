@@ -4,6 +4,8 @@ from asianoptionpricer import GeometricAsianOptionPricer, ArithmeticAsianOptionP
 from basketoptionpricer import ArithmeticBasketOptionBasketPricer, GeometricBasketOptionPricer
 from binominaltree import BinominalTree
 
+import numpy as np
+
 def condition_test(derived_val, expected_val, max_delta = 1e-4):
     global count
     global score
@@ -81,28 +83,22 @@ def test():
     condition_test(mu_hat, TEST_4D_EXPECTED_ANSWER, 0.5)
 
     print(f'\nTest {count}: Monte Carlo Standard estimation for Arithematic Basket Asian Call Option')
-    mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 50, 1e5)
+    mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 1e5)
     TEST_4A_EXPECTED_ANSWER = 24.345
     mu_hat = mcs_test.get_call_premium()
     condition_test(mu_hat, TEST_4A_EXPECTED_ANSWER, 1)
 
     print(f'\nTest {count}: Monte Carlo Standard estimation for Arithematic Basket Asian Put Option')
-    mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 50, 1e5)
+    mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 1e5)
     TEST_4B_EXPECTED_ANSWER = 10.629
     mu_hat = mcs_test.get_put_premium()
     condition_test(mu_hat, TEST_4B_EXPECTED_ANSWER, 1)
 
     print(f'\nTest {count}: Monte Carlo Control Variate estimation for Arithematic Basket Asian Call Option')
-    mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 50, 1e5)
+    mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 1e5)
     TEST_4C_EXPECTED_ANSWER = 24.508
     mu_hat = mcs_test.get_call_premium('std_mcs_cv')
     condition_test(mu_hat, TEST_4C_EXPECTED_ANSWER, 1)
-
-    print(f'\nTest {count}: Monte Carlo Control Variate estimation for Arithematic Basket Asian Put Option')
-    mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 50, 1e5)
-    TEST_4D_EXPECTED_ANSWER = 10.558
-    mu_hat = mcs_test.get_put_premium('std_mcs_cv')
-    condition_test(mu_hat, TEST_4D_EXPECTED_ANSWER, 1) 
 
     print(f'\nTest {count}: Binominal Tree for European Call Option')
     bt_test1 = BinominalTree(2, 2, 3, SIGMA, 0.03, 100)
@@ -139,6 +135,19 @@ def test():
 
     print('\n***RESULT***')
     print('Score ({}/{})'.format(score,count))
+
+    print('\n\n**Bonus Tests**')
+    print(f'\nTest {count}: Monte Carlo Control Variate estimation for Three Assets Arithematic Basket Asian Put Option')
+    rhos = np.array([[1,0.5, 0.5], [0.5,1, 0.5], [0.5,0.5, 1]])
+    mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, rhos, 1e5)
+    mu_hat = mcs_test.get_put_premium('std_mcs_cv')
+    print('Price: ', mu_hat)
+
+    print(f'\nTest {count}: Quasi Monte Carlo estimation for Arithematic Basket Asian Call Option')
+    mcs_test = ArithmeticBasketOptionBasketPricer([100, 100], [0.3, 0.3], 0.05, 3, 100, 0.5, 1e5)
+    TEST_4A_EXPECTED_ANSWER = 24.345
+    mu_hat = mcs_test.get_call_premium('quasi_mcs_cv')
+    condition_test(mu_hat, TEST_4A_EXPECTED_ANSWER, 1)
 
 if __name__ == '__main__':
     

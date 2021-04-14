@@ -3,6 +3,7 @@ from statistics import mean, stdev
 import numpy as np
 from utils import confidence_interval, product, quasi_rand_num_generator, psuedo_rand_num_generator
 from scipy.stats import norm
+from numba import njit, jit
 
 class MonteCarloSimulator:
     def __init__(self, S, sigma, r, T, K, n, m, seed=123):
@@ -116,8 +117,45 @@ class MonteCarloSimulator:
         self.arith_payoffs = math.exp(-self.r * self.T) * arith_futures_payoffs
         self.geo_payoffs = math.exp(-self.r * self.T) * geo_futures_payoffs
 
+    @jit(nopython=True)
+    def run_simulation_fast(self, kind='C', rand_type='psuedo'):
+        """
+        Speed up using numba GPU
+        """
+
+        # initialise the random numbers Z
+        # Zs is an m x n matrix
+        if rand_type == 'quasi':
+            Zs = quasi_rand_num_generator(self.n,self.m,self.seed)
+        elif rand_type == 'psuedo':
+            Zs = psuedo_rand_num_generator(self.n, self.m, self.seed)
+
+        drift = np.exp((self.r - 0.5*(self.sigma**2))*self.deltaT)
+        growth_factors = drift * np.exp(self.sigma * np.sqrt(self.deltaT)*Zs)
+
+        S = np.ones((self.m, self.n))
+        S[:,0] = self.S * growth_factors[:,0]
+        for i in range(1, int(self.n)):
+            S[:,i] = S[:,i-1]*growth_factors[:,i]
+
+        arith_mean = S.mean(axis=1)
+        geo_mean = np.exp(((np.log(S)).sum(axis=1))/self.n)
+
+        if kind == 'C':
+            arith_futures_payoffs = arith_mean - self.K
+            geo_futures_payoffs = geo_mean - self.K
+        else:
+            arith_futures_payoffs = self.K - arith_mean
+            geo_futures_payoffs = self.K - geo_mean
+
+        arith_futures_payoffs[arith_futures_payoffs<=0] = 0
+        geo_futures_payoffs[geo_futures_payoffs<=0] = 0
+
+        self.arith_payoffs = math.exp(-self.r * self.T) * arith_futures_payoffs
+        self.geo_payoffs = math.exp(-self.r * self.T) * geo_futures_payoffs
+
 class MonteCarloBasketSimulator:
-    def __init__(self, Ss, sigmas, r, T, K, n, m, seed=123):
+    def __init__(self, Ss, sigmas, r, T, K, n, m, rhos, seed=123):
         """
         m is the no of paths
         """
@@ -142,6 +180,8 @@ class MonteCarloBasketSimulator:
 
         self.geo_payoffs = None
         self.arith_payoffs = None
+
+        self.rhos = rhos
 
         self.seed = seed
 
@@ -214,6 +254,14 @@ class MonteCarloBasketSimulator:
         elif rand_type == 'psuedo':
             Zs = psuedo_rand_num_generator(self.n * len(self.Ss), self.m, self.seed)
             Zs = Zs.reshape((self.m, self.n, k))
+
+        # create the correlated Z values
+        if self.rhos.shape[0] == 1:
+            Zs[:,:,1] = Zs[:,:,0] * self.rhos + Zs[:,:,1] * np.sqrt(1-self.rhos**2)
+        else:
+            for i in range(1, self.rhos[0].shape[0]-1):
+                Zs[:,:,i] = Zs[:,:,0] * self.rhos[0][i] + Zs[:,:,1] * np.sqrt(1 - self.rhos[0][i]**2)
+
 
         S0s = np.array(self.Ss).reshape((1,k)) # 1 x k array
         sigmas = np.array(self.sigmas).reshape((1,k)) # 1 x k array

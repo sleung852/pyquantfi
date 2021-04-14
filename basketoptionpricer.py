@@ -36,8 +36,8 @@ class GeometricBasketOptionPricer:
             v = self.sigmas[0]**2 * 1 + 2 * self.sigmas[0] * self.sigmas[1] * self.rhos[0] + self.sigmas[1]**2 * 1
         else:
             v = 0
-            for i in len(self.sigmas):
-                for j in len(self.sigmas):
+            for i in range(len(self.sigmas)):
+                for j in range(len(self.sigmas)):
                     v += self.sigmas[i] * self.sigmas[j] * self.rhos[i][j]
         return math.sqrt(v)/self.n
 
@@ -59,7 +59,7 @@ class GeometricBasketOptionPricer:
         else:
             if m is None:
                 m = 100000
-            self.mcs = MonteCarloBasketSimulator(self.Ss, self.sigmas, self.r, self.T, self.K, self.n, m)
+            self.mcs = MonteCarloBasketSimulator(self.Ss, self.sigmas, self.r, self.T, self.K, self.n, m, self.rhos)
             if method == 'quasi_mcs':
                 self.mcs.run_simulation('C', 'quasi')
             else:
@@ -75,7 +75,7 @@ class GeometricBasketOptionPricer:
         else:
             if m is None:
                 m = 100000
-            self.mcs = MonteCarloBasketSimulator(self.Ss, self.sigmas, self.r, self.T, self.K, self.n, m)
+            self.mcs = MonteCarloBasketSimulator(self.Ss, self.sigmas, self.r, self.T, self.K, self.n, m, self.rhos)
             if method == 'quasi_mcs':
                 self.mcs.run_simulation('P', 'quasi')
             else:
@@ -98,7 +98,7 @@ class GeometricBasketOptionPricer:
 
 class ArithmeticBasketOptionBasketPricer:
 
-    def __init__(self, Ss, sigmas, r, T, K, rhos, n, m):
+    def __init__(self, Ss, sigmas, r, T, K, rhos, m):
         assert len(Ss) == len(sigmas), "Size of Ss and sigmas are different!"
         self.n = len(Ss)
         self.Ss = Ss
@@ -111,11 +111,10 @@ class ArithmeticBasketOptionBasketPricer:
         elif type(rhos) == np.ndarray:
             self.rhos = rhos
         else:
-            assert False, "Rhos should be either list or int or float"
+            assert False, "Rhos should be either a np.ndarray or int or float"
         self.m = int(m)
-        self.n = int(n)
-        self.rhos = rhos
-        self.mcs = MonteCarloBasketSimulator(Ss, sigmas, r, T, K, n, m)
+        self.n = len(Ss)
+        self.mcs = MonteCarloBasketSimulator(Ss, sigmas, r, T, K, self.n, m, self.rhos)
 
     def standard_monte_carlo(self):
         # standard monte carlo

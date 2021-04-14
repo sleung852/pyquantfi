@@ -29,8 +29,8 @@ input_values_dict = {
             'Arithmetic Asian Monte Carlo with Control Variate': ['S', 'K', 'T', 'sigma', 'r', 'n', 'm'],
             'Geometric Basket Closed Form': ['S1', 'S2', 'K', 'T', 'sigma1', 'sigma2', 'r', 'rhos'],
             'Geometric Basket Monte Carlo': ['S1', 'S2', 'K', 'T', 'sigma1', 'sigma2', 'r', 'rhos', 'm'],
-            'Arithmetic Basket Monte Carlo': ['S1', 'S2', 'K', 'T', 'sigma1', 'sigma2', 'r', 'rhos', 'n', 'm'],
-            'Arithmetic Basket Monte Carlo with Control Variate': ['S1', 'S2', 'K', 'T', 'sigma1', 'sigma2', 'r', 'rhos', 'n', 'm'],
+            'Arithmetic Basket Monte Carlo': ['S1', 'S2', 'K', 'T', 'sigma1', 'sigma2', 'r', 'rhos', 'm'],
+            'Arithmetic Basket Monte Carlo with Control Variate': ['S1', 'S2', 'K', 'T', 'sigma1', 'sigma2', 'r', 'rhos', 'm'],
             'American Binominal Tree': ['S', 'K', 'T', 'sigma', 'r', 'n'],
         }
 
@@ -169,14 +169,14 @@ def compute_option_price(option_choice_str, option_method_str, option_kind_str, 
         return option_calculator.get_option_premium(**params_option_kind)
 
     elif option_str == 'Arithmetic Basket Monte Carlo':
-        adj_params = {key_str: params[key_str] for key_str in ['r', 'T', 'K', 'rhos', 'n', 'm']}
+        adj_params = {key_str: params[key_str] for key_str in ['r', 'T', 'K', 'rhos', 'm']}
         adj_params['Ss'] = [params['S1'], params['S2']]
         adj_params['sigmas'] = [params['sigma1'], params['sigma2']]
         option_calculator = ArithmeticBasketOptionBasketPricer(**adj_params)
         params_option_kind['method'] = 'std_mcs'
         return option_calculator.get_option_premium(**params_option_kind)
     elif option_str == 'Arithmetic Basket Monte Carlo with Control Variate':
-        adj_params = {key_str: params[key_str] for key_str in ['r', 'T', 'K', 'rhos', 'n', 'm']}
+        adj_params = {key_str: params[key_str] for key_str in ['r', 'T', 'K', 'rhos', 'm']}
         adj_params['Ss'] = [params['S1'], params['S2']]
         adj_params['sigmas'] = [params['sigma1'], params['sigma2']]
         option_calculator = ArithmeticBasketOptionBasketPricer(**adj_params)
