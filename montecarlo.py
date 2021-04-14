@@ -1,4 +1,3 @@
-# from asianoptionpricer import GeometricAsianOptionPricer
 import math
 from statistics import mean, stdev
 import numpy as np
@@ -34,7 +33,10 @@ class MonteCarloSimulator:
         np.random.seed(seed)
         self.seed = seed
 
-    def run_simulation(self, kind='C', rand_type='psuedo'):
+    def run_simulation_slow(self, kind='C', rand_type='psuedo'):
+        """
+        Reference code used in lecture, but this is extremely slow
+        """
         drift = math.exp((self.r - 0.5*(self.sigma**2))*self.deltaT)
         geo_payoffs_list = []
         arith_payoffs_list = []
@@ -78,6 +80,42 @@ class MonteCarloSimulator:
         assert self.geo_payoffs.shape[0] == self.m
         assert self.arith_payoffs.shape[0] == self.m
 
+    def run_simulation(self, kind='C', rand_type='psuedo'):
+        """
+        Speed up using numpy factorisation
+        """
+
+        # initialise the random numbers Z
+        # Zs is an m x n matrix
+        if rand_type == 'quasi':
+            Zs = quasi_rand_num_generator(self.n,self.m,self.seed)
+        elif rand_type == 'psuedo':
+            Zs = psuedo_rand_num_generator(self.n, self.m, self.seed)
+
+        drift = np.exp((self.r - 0.5*(self.sigma**2))*self.deltaT)
+        growth_factors = drift * np.exp(self.sigma * np.sqrt(self.deltaT)*Zs)
+
+        S = np.ones((self.m, self.n))
+        S[:,0] = self.S * growth_factors[:,0]
+        for i in range(1, int(self.n)):
+            S[:,i] = S[:,i-1]*growth_factors[:,i]
+
+        arith_mean = S.mean(axis=1)
+        geo_mean = np.exp(((np.log(S)).sum(axis=1))/self.n)
+
+        if kind == 'C':
+            arith_futures_payoffs = arith_mean - self.K
+            geo_futures_payoffs = geo_mean - self.K
+        else:
+            arith_futures_payoffs = self.K - arith_mean
+            geo_futures_payoffs = self.K - geo_mean
+
+        arith_futures_payoffs[arith_futures_payoffs<=0] = 0
+        geo_futures_payoffs[geo_futures_payoffs<=0] = 0
+
+        self.arith_payoffs = math.exp(-self.r * self.T) * arith_futures_payoffs
+        self.geo_payoffs = math.exp(-self.r * self.T) * geo_futures_payoffs
+
 class MonteCarloBasketSimulator:
     def __init__(self, Ss, sigmas, r, T, K, n, m, seed=123):
         """
@@ -107,7 +145,7 @@ class MonteCarloBasketSimulator:
 
         self.seed = seed
 
-    def run_simulation(self, kind='C', rand_type='psuedo'):
+    def run_simulation_slow(self, kind='C', rand_type='psuedo'):
 
         geo_payoffs_list = []
         arith_payoffs_list = []
@@ -164,3 +202,48 @@ class MonteCarloBasketSimulator:
 
         assert self.geo_payoffs.shape[0] == self.m
         assert self.arith_payoffs.shape[0] == self.m
+
+    def run_simulation(self, kind='C', rand_type='psuedo'):
+        # no. of assets
+        k = len(self.Ss)
+
+        # setup random variables
+        if rand_type == 'quasi':
+            Zs = quasi_rand_num_generator(self.n* len(self.Ss),self.m,self.seed)
+            Zs = Zs.reshape((self.m, self.n, k))
+        elif rand_type == 'psuedo':
+            Zs = psuedo_rand_num_generator(self.n * len(self.Ss), self.m, self.seed)
+            Zs = Zs.reshape((self.m, self.n, k))
+
+        S0s = np.array(self.Ss).reshape((1,k)) # 1 x k array
+        sigmas = np.array(self.sigmas).reshape((1,k)) # 1 x k array
+        drifts = np.exp((self.r - 0.5*(sigmas**2))*self.deltaT).reshape((1,k)) # 1 x k array
+        # resize
+        sigmas = np.ones((self.m,self.n,k)) * sigmas # m x n x k matrix
+        drifts = np.ones((self.m,self.n,k)) * drifts # m x n x k matrix
+        growth_factors = drifts * np.exp(sigmas*np.sqrt(self.deltaT)*Zs) # m x k x n
+        S = S0s * growth_factors[:,0,:] # m x k
+        
+        for i in range(1, int(self.n)):
+            S = S*growth_factors[:,i,:]
+
+        Ba_T = S.mean(axis=1)
+        Bg_T = np.prod(S, axis=1)**(1/k)
+
+        if kind == 'C':
+            arith_futures_payoffs = Ba_T - self.K
+            geo_futures_payoffs = Bg_T - self.K
+        else:
+            arith_futures_payoffs = self.K - Ba_T
+            geo_futures_payoffs = self.K - Bg_T
+
+        # compute options value at T
+        arith_futures_payoffs[arith_futures_payoffs<=0] = 0
+        geo_futures_payoffs[geo_futures_payoffs<=0] = 0
+
+        self.arith_payoffs = math.exp(-self.r * self.T) * arith_futures_payoffs
+        self.geo_payoffs = math.exp(-self.r * self.T) * geo_futures_payoffs
+        
+
+
+        
