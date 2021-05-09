@@ -43,7 +43,7 @@ class GeometricAsianOptionPricer:
         else:
             if m is None:
                 m = 100000
-            self.mcs = MonteCarloSimulator(self.S, self.sigma, self.r, self.T, self.K, self.n, int(m))
+            self.mcs = MonteCarloSimulatorOld(self.S, self.sigma, self.r, self.T, self.K, self.n, int(m))
             if method == 'quasi_mcs':
                 self.mcs.run_simulation('C', 'quasi')
             else:
@@ -59,7 +59,7 @@ class GeometricAsianOptionPricer:
         else:
             if m is None:
                 m = 100000
-            self.mcs = MonteCarloSimulator(self.S, self.sigma, self.r, self.T, self.K, self.n, m)
+            self.mcs = MonteCarloSimulatorOld(self.S, self.sigma, self.r, self.T, self.K, self.n, m)
             if method == 'quasi_mcs':
                 self.mcs.run_simulation('P', 'quasi')
             else:
@@ -92,7 +92,7 @@ class ArithmeticAsianOptionPricer:
         self.m = int(m)
         self.deltaT = self.T/self.n
 
-        self.mcs = MonteCarloSimulator(S, sigma, r, T, K, n, m, seed)
+        self.mcs = MonteCarloSimulatorOld(S, sigma, r, T, K, n, m, seed)
 
     def standard_monte_carlo(self):
         # standard monte carlo

@@ -59,7 +59,7 @@ class GeometricBasketOptionPricer:
         else:
             if m is None:
                 m = 100000
-            self.mcs = MonteCarloBasketSimulator(self.Ss, self.sigmas, self.r, self.T, self.K, self.n, m, self.rhos)
+            self.mcs = MonteCarloBasketSimulatorOld(self.Ss, self.sigmas, self.r, self.T, self.K, self.n, m, self.rhos)
             if method == 'quasi_mcs':
                 self.mcs.run_simulation('C', 'quasi')
             else:
@@ -75,7 +75,7 @@ class GeometricBasketOptionPricer:
         else:
             if m is None:
                 m = 100000
-            self.mcs = MonteCarloBasketSimulator(self.Ss, self.sigmas, self.r, self.T, self.K, self.n, m, self.rhos)
+            self.mcs = MonteCarloBasketSimulatorOld(self.Ss, self.sigmas, self.r, self.T, self.K, self.n, m, self.rhos)
             if method == 'quasi_mcs':
                 self.mcs.run_simulation('P', 'quasi')
             else:
@@ -114,7 +114,7 @@ class ArithmeticBasketOptionBasketPricer:
             assert False, "Rhos should be either a np.ndarray or int or float"
         self.m = int(m)
         self.n = len(Ss)
-        self.mcs = MonteCarloBasketSimulator(Ss, sigmas, r, T, K, self.n, m, self.rhos)
+        self.mcs = MonteCarloBasketSimulatorOld(Ss, sigmas, r, T, K, self.n, m, self.rhos)
 
     def standard_monte_carlo(self):
         # standard monte carlo
