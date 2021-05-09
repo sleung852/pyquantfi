@@ -39,6 +39,12 @@ class EuropeanOptionPricer:
         if kind == 'C':
             return self.get_call_premium()
         return self.get_put_premium()
+    
+    def get_call_delta(self):
+        return _N(self._d1())
+    
+    def get_put_delta(self):
+        return _N(self._d1()) - 1
 
 
 
