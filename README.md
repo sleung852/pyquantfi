@@ -1,11 +1,6 @@
-# **Option Pricer Report**
+### **Features**
 
-
-
-### **Contributions**
-
-I completed this project alone.
-
+Provide a simple tool to compute vanilla and exotic options
 
 
 ### **UI Description**
