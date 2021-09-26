@@ -41,10 +41,10 @@ On the other hand, to obtain the implied volatility, click the 'Implied Volatili
 ### Functionalities of Each Class/Function
 
 ```python
-from blackscholes import EuropeanOptionPricer
-from asianoptionpricer import GeometricAsianOptionPricer, ArithmeticAsianOptionPricer
-from basketoptionpricer import ArithmeticBasketOptionBasketPricer, GeometricBasketOptionPricer
-from binominaltree import BinominalTree
+from pyquantfi.blackscholes import EuropeanOptionPricer
+from pyquantfi.asianoptionpricer import GeometricAsianOptionPricer, ArithmeticAsianOptionPricer
+from pyquantfi.basketoptionpricer import ArithmeticBasketOptionBasketPricer, GeometricBasketOptionPricer
+from pyquantfi.binominaltree import BinominalTree
 ```
 
 All of these classes that aim to calculate the option value contain a method **get_call_premium()** which calculates the call option value, **get_put_premium()** which calculates the put option value and **get_option_premium()** which has an argument **kind** which can either be 'C' or 'P' to return the call and put value respectively. Now these three methods may contain other arguments such as **method** which you can set the methodology.
