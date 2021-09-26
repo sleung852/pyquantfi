@@ -73,7 +73,7 @@ mu_hat2 = mcs_test.get_put_premium(method='quasi_msc_cv')
 
 ### Test Case and Analysis
 
-The result of the test cases can be found by running the following scripts
+The result of the test cases can be found by running the following scripts located in the 'test' directory
 
 ```bash
 python official_test_asian.py
