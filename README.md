@@ -26,15 +26,15 @@ The UI is quite simple. After launched, you arrives at the menu. Start from the 
 
 On the 'Option Value' tab, you select the Option Type, Methodology and Option Kind via the drop boxes. Click 'Next' to proceed to enter the parameter values.
 
-![1](https://github.com/sleung852/pyquantfi/blob/master/pics/1.png)
+![1](/home/see/Documents/blackscholesapp/pics/1.png)
 
 Then click 'Compute' to obtain the option value and click 'Menu' to return to the menu.
 
-![2](https://github.com/sleung852/pyquantfi/blob/master/pics/2.png)
+![2](/home/see/Documents/blackscholesapp/pics/2.png)
 
 On the other hand, to obtain the implied volatility, click the 'Implied Volatility' tab, fill in the parameters and click 'Compute' to get the implied volatility.
 
-![3](https://github.com/sleung852/pyquantfi/blob/master/pics/3.png)
+![3](/home/see/Documents/blackscholesapp/pics/3.png)
 
 *Please note only the basic features are supported in the UI. Additional features are only available via calling classes and functions.
 
@@ -127,5 +127,5 @@ and this will show you some test results of the program. This includes test resu
   - As mentioned above, the rhos input must be a numpy array n x n correlation matrix for n assets.
 - Quasi Monte Carlo Simulation
 - Binomial Tree that supports European Option pricing
-- GPU acceleration (partially complete [hence you will see some incomplete codes, but they do not affect the performance of the program overall])
+- GPU acceleration implemented in C++ (Please refer to example)
 

@@ -1,8 +1,16 @@
-from blackscholes import EuropeanOptionPricer
-from impliedvol import ImpliedVolatilityEstimator
-from asianoptionpricer import GeometricAsianOptionPricer, ArithmeticAsianOptionPricer
-from basketoptionpricer import ArithmeticBasketOptionBasketPricer, GeometricBasketOptionPricer
-from binominaltree import BinominalTree
+import os
+import sys
+import inspect
+
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir) 
+
+from pyquantfi.blackscholes import EuropeanOptionPricer
+from pyquantfi.impliedvol import ImpliedVolatilityEstimator
+from pyquantfi.asianoptionpricer import GeometricAsianOptionPricer, ArithmeticAsianOptionPricer
+from pyquantfi.basketoptionpricer import ArithmeticBasketOptionBasketPricer, GeometricBasketOptionPricer
+from pyquantfi.binominaltree import BinominalTree
 
 import numpy as np
 

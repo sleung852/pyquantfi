@@ -3,7 +3,6 @@ from itertools import permutations
 import math
 import numpy as np
 import ghalton
-import sobol_seq
 
 
 def _N(dx, sign=1):

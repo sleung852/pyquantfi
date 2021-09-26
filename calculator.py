@@ -1,11 +1,11 @@
 import sys
 import PySimpleGUI as sg
 
-from blackscholes import EuropeanOptionPricer
-from impliedvol import ImpliedVolatilityEstimator
-from asianoptionpricer import GeometricAsianOptionPricer, ArithmeticAsianOptionPricer
-from basketoptionpricer import ArithmeticBasketOptionBasketPricer, GeometricBasketOptionPricer
-from binominaltree import BinominalTree
+from pyquantfi.blackscholes import EuropeanOptionPricer
+from pyquantfi.impliedvol import ImpliedVolatilityEstimator
+from pyquantfi.asianoptionpricer import GeometricAsianOptionPricer, ArithmeticAsianOptionPricer
+from pyquantfi.basketoptionpricer import ArithmeticBasketOptionBasketPricer, GeometricBasketOptionPricer
+from pyquantfi.binominaltree import BinominalTree
 
 
 

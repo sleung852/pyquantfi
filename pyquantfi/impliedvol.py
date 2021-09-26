@@ -1,5 +1,5 @@
-from utils import _N
-from blackscholes import EuropeanOptionPricer
+from .utils import _N
+from .blackscholes import EuropeanOptionPricer
 import math   
     
 class ImpliedVolatilityEstimator:
