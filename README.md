@@ -1,6 +1,6 @@
 ### **Features**
 
-Provide a simple tool to compute vanilla and exotic options
+Provide a simple tool to compute the prices of vanilla and exotic options
 
 
 ### **UI Description**
