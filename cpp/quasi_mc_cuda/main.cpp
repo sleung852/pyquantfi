@@ -78,17 +78,24 @@ int main() {
     int n = 10; // no of step (num of time)
     int m = 10; // no of path (num of simulations)
 
-    double Zs [n*m]; // declare a quasi random variables array
-    quasi_random_number_1d(Zs, n*m, 2); // generate quasi random varibles
-    double ST [m]; // declare an array for simluated stock price at time T
+    try {
+        double Zs [n*m]; // declare a quasi random variables array
+        quasi_random_number_1d(Zs, n*m, 2); // generate quasi random varibles
+        double ST [m]; // declare an array for simluated stock price at time T
 
-    run_mc(ST, S, sigma, rate, T, n, m, Zs); // run simulations in GPU
+        run_mc(ST, S, sigma, rate, T, n, m, Zs); // run simulations in GPU
 
-    // print values
-    for (int i=0; i<m; i++) {
-        cout << ST[i] << " ";
+        // print values
+        for (int i=0; i<m; i++) {
+            cout << ST[i] << " ";
+        }
+        cout << endl;
     }
-    cout << endl;
+    catch(exception& e) {
+        cout << "exception: " << e.what() << endl;
+    }
+
+
 
     return 0;
 }

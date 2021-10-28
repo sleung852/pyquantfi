@@ -6,7 +6,7 @@
 // declare function to be ran in the GPU
 __global__ void monte_carlo_sim(double* d_ST, const double* d_Zs,
 	const double* d_S, const double* d_drift, const double* d_sigma,
-	const double* d_deltaT, const double* d_n, const double* d_m);
+	const double* d_deltaT, const int* d_n, const int* d_m);
 
 // function to setup running Monte Carlo Simulation in the GPU
 void run_mc(double* ST, double S, double sigma, double rate, double T, int n,
@@ -112,7 +112,7 @@ void run_mc(double* ST, double S, double sigma, double rate, double T, int n,
 
 __global__ void monte_carlo_sim(double* d_ST, const double* d_Zs,
 	const double* d_S, const double* d_drift, const double* d_sigma,
-	const double* d_deltaT, const double* d_n, const double* d_m) {
+	const double* d_deltaT, const int* d_n, const int* d_m) {
 
 	// get thread, block ids and block dim
     const unsigned tid = threadIdx.x;
