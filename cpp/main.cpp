@@ -74,7 +74,14 @@ int main() {
         run_mc_cpu(ST_cpu, S, sigma, rate, T, n, m, Zs);
         double cpu_end=double(clock())/CLOCKS_PER_SEC;
 
-        cout<<"****************** REPORT ****************\n";
+        cout<<"****************** INPUTS ****************\n";
+        cout<<"Initial Stock Price: " << S << "\n";
+        cout<<"Sigma: " << sigma << "\n";
+        cout<<"Interest Rate: " << rate << "\n";
+        cout<<"T: " << T << "\n";
+        cout<<"No of steps: " << n << "\n";
+        cout<<"No of simulations: " << m << "\n";
+        cout<<"****************** OUTPUTS ***************\n";
         cout<<"GPU Stock Price: " << arith_mean(ST_gpu, m) << "\n";
         cout<<"CPU Stock Price: " << arith_mean(ST_cpu, m) << "\n";        
         cout<<"******************* TIME *****************\n";
