@@ -76,11 +76,11 @@ int main() {
 
         cout<<"****************** INPUTS ****************\n";
         cout<<"Initial Stock Price: " << S << "\n";
-        cout<<"Sigma: " << sigma << "\n";
-        cout<<"Interest Rate: " << rate << "\n";
-        cout<<"T: " << T << "\n";
-        cout<<"No of steps: " << n << "\n";
-        cout<<"No of simulations: " << m << "\n";
+        cout<<"              Sigma: " << sigma << "\n";
+        cout<<"      Interest Rate: " << rate << "\n";
+        cout<<"                  T: " << T << "\n";
+        cout<<"        No of steps: " << n << "\n";
+        cout<<"  No of simulations: " << m << "\n";
         cout<<"****************** OUTPUTS ***************\n";
         cout<<"GPU Stock Price: " << arith_mean(ST_gpu, m) << "\n";
         cout<<"CPU Stock Price: " << arith_mean(ST_cpu, m) << "\n";        
